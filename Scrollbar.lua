@@ -67,12 +67,12 @@ function CEPGP_UpdateLootScrollBar()
 						_G["LootDistButton" .. i .. "Tex"]:SetScript('OnLeave', function()
 																						GameTooltip:Hide()
 																			end);
-						_G["LootDistButton" .. i .. "Tex"]:SetScript('OnEnter', function()	
+						_G["LootDistButton" .. i .. "Tex"]:SetScript('OnEnter', function()
 																				GameTooltip:SetOwner(_G["LootDistButton" .. i .. "Tex"], "ANCHOR_TOPLEFT");
 																				GameTooltip:SetHyperlink(iString);
 																				GameTooltip:Show();
 																			end);
-						_G["LootDistButton" .. i .. "Icon"]:SetTexture(tex);					
+						_G["LootDistButton" .. i .. "Icon"]:SetTexture(tex);
 					end);
 				else
 					iString = CEPGP_getItemString(link);
@@ -100,7 +100,7 @@ function CEPGP_UpdateLootScrollBar()
 					_G["LootDistButton" .. i .. "Tex"]:SetScript('OnLeave', function()
 																					GameTooltip:Hide()
 																		end);
-					_G["LootDistButton" .. i .. "Tex"]:SetScript('OnEnter', function()	
+					_G["LootDistButton" .. i .. "Tex"]:SetScript('OnEnter', function()
 																			GameTooltip:SetOwner(_G["LootDistButton" .. i .. "Tex"], "ANCHOR_TOPLEFT");
 																			GameTooltip:SetHyperlink(iString);
 																			GameTooltip:Show();
@@ -111,7 +111,7 @@ function CEPGP_UpdateLootScrollBar()
 				_G["LootDistButton" .. i .. "Tex"]:SetScript('OnEnter', function() end);
 				_G["LootDistButton" .. i .. "Icon"]:SetTexture(nil);
 			end
-			
+
 			if tempTable[i][9] ~= "noitem" then
 				local id = tonumber(tempTable[i][9]);
 				_, link, _, _, _, _, _, _, _, tex2 = GetItemInfo(id);
@@ -145,11 +145,11 @@ function CEPGP_UpdateLootScrollBar()
 						_G["LootDistButton" .. i .. "Tex2"]:SetScript('OnLeave', function()
 																				GameTooltip:Hide()
 																			end);
-						_G["LootDistButton" .. i .. "Tex2"]:SetScript('OnEnter', function()	
+						_G["LootDistButton" .. i .. "Tex2"]:SetScript('OnEnter', function()
 														GameTooltip:SetOwner(_G["LootDistButton" .. i .. "Tex2"], "ANCHOR_TOPLEFT")
 														GameTooltip:SetHyperlink(iString2)
 														GameTooltip:Show()
-													end);				
+													end);
 						_G["LootDistButton" .. i .. "Icon2"]:SetTexture(tex2);
 					end);
 				else
@@ -178,11 +178,11 @@ function CEPGP_UpdateLootScrollBar()
 					_G["LootDistButton" .. i .. "Tex2"]:SetScript('OnLeave', function()
 																			GameTooltip:Hide()
 																		end);
-					_G["LootDistButton" .. i .. "Tex2"]:SetScript('OnEnter', function()	
+					_G["LootDistButton" .. i .. "Tex2"]:SetScript('OnEnter', function()
 													GameTooltip:SetOwner(_G["LootDistButton" .. i .. "Tex2"], "ANCHOR_TOPLEFT")
 													GameTooltip:SetHyperlink(iString2)
 													GameTooltip:Show()
-												end);				
+												end);
 					_G["LootDistButton" .. i .. "Icon2"]:SetTexture(tex2);
 				end
 			else
@@ -311,7 +311,7 @@ function CEPGP_UpdateRaidScrollBar()
 				[7] = CEPGP_raidRoster[i][8]  --Class in English
 			};
 		end
-		
+
 		if not tempTable[i][3] then tempTable[i][3] = CEPGP_raidRoster[i][3]; end
 	end
 	local kids = {_G["CEPGP_raid_scrollframe_container"]:GetChildren()};
@@ -629,7 +629,7 @@ function CEPGP_UpdateAttendanceScrollBar()
 	local size;
 	local sbCount = 1;
 	local count = 1;
-	if CEPGP_snapshot then 
+	if CEPGP_snapshot then
 		size = #CEPGP_raid_logs[CEPGP_snapshot]-1;
 	else
 		size = CEPGP_ntgetn(CEPGP_roster);
@@ -710,7 +710,7 @@ function CEPGP_UpdateAttendanceScrollBar()
 	else
 		_G["CEPGP_attendance_header_total"]:SetText("Total Snapshots Recorded: 0");
 	end
-	
+
 	size = #tempTable;
 	for i = 1, size do
 		local avg, colour;
@@ -747,7 +747,7 @@ function CEPGP_UpdateAttendanceScrollBar()
 		_G["AttendanceButton" .. i .. "Info"]:SetText(tempTable[i][1]);
 		_G["AttendanceButton" .. i .. "Info"]:SetTextColor(colour.r, colour.g, colour.b);
 		_G["AttendanceButton" .. i .. "Rank"]:SetText(tempTable[i][3]);
-		_G["AttendanceButton" .. i .. "Rank"]:SetTextColor(colour.r, colour.g, colour.b);		
+		_G["AttendanceButton" .. i .. "Rank"]:SetTextColor(colour.r, colour.g, colour.b);
 		if totals[1] == 0 then
 			_G["AttendanceButton" .. i .. "Total"]:SetText(tempTable[i][4] .. " (" .. avg*100 .. "%)");
 			_G["AttendanceButton" .. i .. "Total"]:SetTextColor(0, 1, 0);
@@ -772,7 +772,7 @@ function CEPGP_UpdateAttendanceScrollBar()
 			_G["AttendanceButton" .. i .. "Int30"]:SetTextColor(0, 1, 0);
 		else
 			_G["AttendanceButton" .. i .. "Int30"]:SetTextColor(1-(tempTable[i][7]/totals[3]), (tempTable[i][7]/totals[3])/1, 0);
-		end		
+		end
 		_G["AttendanceButton" .. i .. "Int60"]:SetText(tempTable[i][8] .. "/" .. totals[4]);
 		if totals[4] == 0 then
 			_G["AttendanceButton" .. i .. "Int60"]:SetTextColor(0, 1, 0);
@@ -786,7 +786,7 @@ function CEPGP_UpdateAttendanceScrollBar()
 			_G["AttendanceButton" .. i .. "Int90"]:SetTextColor(1-(tempTable[i][9]/totals[5]), (tempTable[i][9]/totals[5])/1, 0);
 		end
 	end
-	
+
 			--[[ STANDBY ]]--
 	size = #standbyTable;
 	for i = 1, size do
@@ -820,7 +820,7 @@ function CEPGP_UpdateAttendanceScrollBar()
 		_G["StandbyAttendanceButton" .. i .. "Info"]:SetText(standbyTable[i][1]);
 		_G["StandbyAttendanceButton" .. i .. "Info"]:SetTextColor(colour.r, colour.g, colour.b);
 		_G["StandbyAttendanceButton" .. i .. "Rank"]:SetText(standbyTable[i][3]);
-		_G["StandbyAttendanceButton" .. i .. "Rank"]:SetTextColor(colour.r, colour.g, colour.b);		
+		_G["StandbyAttendanceButton" .. i .. "Rank"]:SetTextColor(colour.r, colour.g, colour.b);
 		_G["StandbyAttendanceButton" .. i .. "Total"]:SetText(standbyTable[i][4] .. " (" .. avg*100 .. "%)");
 		_G["StandbyAttendanceButton" .. i .. "Total"]:SetTextColor(1-avg,avg/1,0);
 		_G["StandbyAttendanceButton" .. i .. "Int7"]:SetText(standbyTable[i][5] .. "/" .. totals[1]);
@@ -840,7 +840,7 @@ function CEPGP_UpdateAttendanceScrollBar()
 			_G["StandbyAttendanceButton" .. i .. "Int30"]:SetTextColor(1-(standbyTable[i][7]/totals[3]), 1, 0);
 		else
 			_G["StandbyAttendanceButton" .. i .. "Int30"]:SetTextColor(1-(standbyTable[i][7]/totals[3]), (standbyTable[i][7]/totals[3])/1, 0);
-		end		
+		end
 		_G["StandbyAttendanceButton" .. i .. "Int60"]:SetText(standbyTable[i][8] .. "/" .. totals[4]);
 		if totals[4] == 0 then
 			_G["StandbyAttendanceButton" .. i .. "Int60"]:SetTextColor(1-(standbyTable[i][8]/totals[4]), 1, 0);

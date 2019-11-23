@@ -6937,7 +6937,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						CEPGP_expor_traffic:SetAttribute("format", "CSV");
+						CEPGP_export_traffic:SetAttribute("format", "CSV");
 						CEPGP_formatExportTraffic();
 					</OnClick>
 					<OnEnter>
