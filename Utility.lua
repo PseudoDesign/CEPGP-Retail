@@ -1439,20 +1439,21 @@ function CEPGP_formatExportTraffic()
 			end
 			text = text .. "\n";
 		elseif form == "JSON" then
-			--text = text .. "{",
-			--text = text .. "\"target_name\":\"" .. name .. "\",";
-			--text = text .. "\"issuer_name\":\"" .. issuer .. "\",";
-			--text = text .. "\"action\":\"" .. action .. "\",";
-			--text = text .. "\"ep_before\":\"" .. EPB .. "\",";
-			--text = text .. "\"ep_after\":\"" .. EPA .. "\",";
-			--text = text .. "\"gp_before\":\"" .. GPB .. "\",";
-			--text = text .. "\"gp_after\":\"" .. GPA .. "\",";
-			--if item then
-			--	text = text .. "\"item\":\"" .. item .. "\",";
-			--end
-			--if tStamp then
-			--	text = text .. "\"timestamp\":\"" .. tStamp .. "\",";
-			--end
+			text = text .. "{";
+			text = text .. "\"target_name\":\"" .. name .. "\",";
+			text = text .. "\"issuer_name\":\"" .. issuer .. "\",";
+			text = text .. "\"action\":\"" .. action .. "\",";
+			text = text .. "\"ep_before\":\"" .. EPB .. "\",";
+			text = text .. "\"ep_after\":\"" .. EPA .. "\",";
+			text = text .. "\"gp_before\":\"" .. GPB .. "\",";
+			text = text .. "\"gp_after\":\"" .. GPA .. "\",";
+			if item then
+				text = text .. "\"item\":\"" .. item .. "\",";
+			end
+			if tStamp then
+				text = text .. "\"timestamp\":\"" .. tStamp .. "\",";
+			end
+			text = text .. "},";
 		end
 	end
 	if form == "JSON" then
