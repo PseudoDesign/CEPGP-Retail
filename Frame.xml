@@ -6937,8 +6937,8 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						CEPGP_expor_traffict:SetAttribute("format", "CSV");
-						CEPGP_formatExport();
+						CEPGP_expor_traffic:SetAttribute("format", "CSV");
+						CEPGP_formatExportTraffic();
 					</OnClick>
 					<OnEnter>
 						GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
@@ -6963,7 +6963,7 @@
 				<Scripts>
 					<OnClick>
 						CEPGP_export_traffic:SetAttribute("format", "JSON");
-						CEPGP_formatExport();
+						CEPGP_formatExportTraffic();
 					</OnClick>
 					<OnEnter>
 						GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
@@ -6987,7 +6987,7 @@
 				self:StopMovingOrSizing();
 			</OnDragStop>
 			<OnShow>
-				CEPGP_formatExport();
+				CEPGP_formatExportTraffic();
 			</OnShow>
 		</Scripts>
 	</Frame>
