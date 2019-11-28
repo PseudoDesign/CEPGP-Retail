@@ -80,6 +80,7 @@ TRAFFIC = {};
 CEPGP_raid_logs = {};
 CEPGP_standbyRoster = {};
 CEPGP_minEP = {false, 0};
+CEPGP_verbose_traffic_logging = false;
 
 local L = CEPGP_Locale:GetLocale("CEPGP")
 

@@ -98,28 +98,28 @@ function CEPGP_initialise()
 	tinsert(UISpecialFrames, "CEPGP_settings_import");
 	tinsert(UISpecialFrames, "CEPGP_override");
 	tinsert(UISpecialFrames, "CEPGP_traffic");
-	
+
 	C_ChatInfo.RegisterAddonMessagePrefix("CEPGP"); --Registers CEPGP for use in the addon comms environment
 	CEPGP_SendAddonMsg("version-check", "GUILD");
 	DEFAULT_CHAT_FRAME:AddMessage("|c00FFC100Classic EPGP Version: " .. CEPGP_VERSION .. " Loaded|r");
 	DEFAULT_CHAT_FRAME:AddMessage("|c00FFC100CEPGP: Currently reporting to channel - " .. CHANNEL .. "|r");
-	
+
 	if not CEPGP_notice then
 		CEPGP_notice_frame:Show();
 	elseif not CEPGP_1120_notice then
 		_G["CEPGP_update_notice"]:Show();
 	end
-	
+
 	if IsInRaid("player") and CEPGP_isML() == 0 then
 		_G["CEPGP_confirmation"]:Show();
 	end
-	
+
 	CEPGP_updateGuild();
 	GameTooltip:HookScript("OnTooltipSetItem", CEPGP_addGPTooltip);
 	hooksecurefunc("ChatFrame_OnHyperlinkShow", CEPGP_addGPHyperlink);
 end
 
-function CEPGP_calcGP(link, quantity, id)	
+function CEPGP_calcGP(link, quantity, id)
 	local name, rarity, ilvl, itemType, subType, slot, classID, subClassID;
 	if id then
 		name, link, rarity, ilvl, itemType, subType, _, _, slot, _, _, classID, subClassID = GetItemInfo(id);
@@ -142,7 +142,7 @@ function CEPGP_calcGP(link, quantity, id)
 					return v;
 				end
 			end
-			
+
 			for _, k in pairs(CEPGP_tokens) do
 			for slotName, v in pairs(k) do
 				if k[slotName][tonumber(id)] then
@@ -155,7 +155,7 @@ function CEPGP_calcGP(link, quantity, id)
 		if slot == "" or slot == nil then
 			slot = "INVTYPE_EXCEPTION";
 		end
-			
+
 			if slot == "INVTYPE_ROBE" then slot = "INVTYPE_CHEST"; end
 			if slot == "INVTYPE_WEAPON" then slot = "INVTYPE_WEAPONOFFHAND"; end
 			if CEPGP_debugMode then
@@ -202,7 +202,7 @@ function CEPGP_calcGP(link, quantity, id)
 		if slot == "" or slot == nil then
 			slot = "INVTYPE_EXCEPTION";
 		end
-		
+
 		if slot == "INVTYPE_ROBE" then slot = "INVTYPE_CHEST"; end
 		if slot == "INVTYPE_WEAPON" then slot = "INVTYPE_WEAPONOFFHAND"; end
 		if CEPGP_debugMode then
@@ -237,13 +237,13 @@ function CEPGP_addGPTooltip(self)
 		local item = Item:CreateFromItemID(tonumber(id));
 		item:ContinueOnItemLoad(function()
 			local gp = CEPGP_calcGP(_, 1, id);
-			GameTooltip:AddLine("GP Value: " .. gp, {1,1,1});	
+			GameTooltip:AddLine("GP Value: " .. gp, {1,1,1});
 		end);
 	else
 		local gp = CEPGP_calcGP(_, 1, id);
 		GameTooltip:AddLine("GP Value: " .. gp, {1,1,1});
 	end
-	
+
 end
 
 function CEPGP_addGPHyperlink(self, iString)
@@ -292,7 +292,7 @@ function CEPGP_populateFrame(CEPGP_criteria, items)
 			total = 0;
 		else
 			local i = 1;
-			for _,value in pairs(items) do 
+			for _,value in pairs(items) do
 				tempItems[i] = value;
 				i = i + 1;
 				count = count + 1;
@@ -301,7 +301,7 @@ function CEPGP_populateFrame(CEPGP_criteria, items)
 		end
 		total = count;
 	end
-	if CEPGP_mode == "loot" then 
+	if CEPGP_mode == "loot" then
 		for i = 1, total do
 			local texture, name, quality, gp, colour, iString, link, slot, x, quantity;
 			x = i;
@@ -318,21 +318,21 @@ function CEPGP_populateFrame(CEPGP_criteria, items)
 				_G[CEPGP_mode..'announce'..i]:SetWidth(20);
 				_G[CEPGP_mode..'announce'..i]:SetScript('OnClick', function() CEPGP_announce(link, x, slot, quantity) CEPGP_distribute:SetID(_G[CEPGP_mode..'announce'..i]:GetID()) end);
 				_G[CEPGP_mode..'announce'..i]:SetID(slot);
-				
+
 				_G[CEPGP_mode..'icon'..i]:Show();
 				_G[CEPGP_mode..'icon'..i]:SetScript('OnEnter', function() GameTooltip:SetOwner(_G[CEPGP_mode..'icon'..i], "ANCHOR_BOTTOMLEFT") GameTooltip:SetHyperlink(iString) GameTooltip:Show() end);
 				_G[CEPGP_mode..'icon'..i]:SetScript('OnLeave', function() GameTooltip:Hide() end);
-				
+
 				_G[CEPGP_mode..'texture'..i]:Show();
 				_G[CEPGP_mode..'texture'..i]:SetTexture(texture);
-				
+
 				_G[CEPGP_mode..'item'..i]:Show();
 				_G[CEPGP_mode..'item'..i].text:SetText(link);
 				_G[CEPGP_mode..'item'..i].text:SetTextColor(colour.r, colour.g, colour.b);
 				_G[CEPGP_mode..'item'..i].text:SetPoint('CENTER',_G[CEPGP_mode..'item'..i]);
 				_G[CEPGP_mode..'item'..i]:SetWidth(_G[CEPGP_mode..'item'..i].text:GetStringWidth());
 				_G[CEPGP_mode..'item'..i]:SetScript('OnClick', function() SetItemRef(link, iString) end);
-				
+
 				_G[CEPGP_mode..'itemGP'..i]:SetText(gp);
 				_G[CEPGP_mode..'itemGP'..i]:SetTextColor(colour.r, colour.g, colour.b);
 				_G[CEPGP_mode..'itemGP'..i]:SetWidth(35);
@@ -345,24 +345,24 @@ function CEPGP_populateFrame(CEPGP_criteria, items)
 				subframe.announce:SetWidth(20);
 				subframe.announce:SetScript('OnClick', function() CEPGP_announce(link, x, slot, quantity) CEPGP_distribute:SetID(_G[CEPGP_mode..'announce'..i]:GetID()); end);
 				subframe.announce:SetID(slot);
-	
+
 				subframe.icon = CreateFrame('Button', CEPGP_mode..'icon'..i, subframe);
 				subframe.icon:SetHeight(20);
 				subframe.icon:SetWidth(20);
 				subframe.icon:SetScript('OnEnter', function() GameTooltip:SetOwner(_G[CEPGP_mode..'icon'..i], "ANCHOR_BOTTOMLEFT") GameTooltip:SetHyperlink(link) GameTooltip:Show() end);
 				subframe.icon:SetScript('OnLeave', function() GameTooltip:Hide() end);
-				
+
 				local tex = subframe.icon:CreateTexture(CEPGP_mode..'texture'..i, "BACKGROUND");
 				tex:SetAllPoints();
 				tex:SetTexture(texture);
-				
+
 				subframe.itemName = CreateFrame('Button', CEPGP_mode..'item'..i, subframe);
 				subframe.itemName:SetHeight(20);
-				
+
 				subframe.itemGP = CreateFrame('EditBox', CEPGP_mode..'itemGP'..i, subframe, 'InputBoxTemplate');
 				subframe.itemGP:SetHeight(20);
 				subframe.itemGP:SetWidth(35);
-				
+
 				if i == 1 then
 					subframe.announce:SetPoint('CENTER', _G['CEPGP_'..CEPGP_mode..'_announce'], 'BOTTOM', -10, -20);
 					subframe.icon:SetPoint('LEFT', _G[CEPGP_mode..'announce'..i], 'RIGHT', 10, 0);
@@ -376,16 +376,16 @@ function CEPGP_populateFrame(CEPGP_criteria, items)
 					subframe.itemName:SetPoint('LEFT', _G[CEPGP_mode..'icon'..i], 'RIGHT', 10, 0);
 					subframe.itemGP:SetPoint('CENTER', _G[CEPGP_mode..'itemGP'..(i-1)], 'BOTTOM', 0, -20);
 				end
-				
+
 				subframe.icon:SetScript('OnClick', function() SetItemRef(link, iString) end);
-				
+
 				subframe.itemName.text = subframe.itemName:CreateFontString(CEPGP_mode..'EPGP_i'..name..'text', 'OVERLAY', 'GameFontNormal');
 				subframe.itemName.text:SetPoint('CENTER', _G[CEPGP_mode..'item'..i]);
 				subframe.itemName.text:SetText(link);
 				subframe.itemName.text:SetTextColor(colour.r, colour.g, colour.b);
 				subframe.itemName:SetWidth(subframe.itemName.text:GetStringWidth());
 				subframe.itemName:SetScript('OnClick', function() SetItemRef(link, iString) end);
-				
+
 				subframe.itemGP:SetText(gp);
 				subframe.itemGP:SetTextColor(colour.r, colour.g, colour.b);
 				subframe.itemGP:SetWidth(35);
@@ -418,8 +418,8 @@ function CEPGP_cleanTable()
 		_G[CEPGP_mode..'member_PR'..i].text:SetText("");
 		i = i + 1;
 	end
-	
-	
+
+
 	i = 1;
 	while _G[CEPGP_mode..'item'..i] ~= nil do
 		_G[CEPGP_mode..'announce'..i]:Hide();
@@ -504,7 +504,7 @@ function CEPGP_rosterUpdate(event)
 			CEPGP_standbyRoster = {};
 		end
 		CEPGP_UpdateStandbyScrollBar();
-		
+
 	elseif event == "GROUP_ROSTER_UPDATE" then
 		if IsInRaid("player") and CEPGP_isML() == 0 then
 			if not CEPGP_use then
@@ -567,7 +567,7 @@ function CEPGP_rosterUpdate(event)
 		else --[[ Hides the raid and loot distribution buttons if the player is not in a raid group ]]--
 			CEPGP_mode = "guild";
 			CEPGP_toggleFrame("CEPGP_guild");
-			
+
 		end
 		if _G["CEPGP_guild"]:IsVisible() then
 			CEPGP_UpdateRaidScrollBar();
@@ -600,7 +600,7 @@ function CEPGP_addToStandby(player)
 			CEPGP_print(player .. " is part of the raid", true);
 			return;
 		end
-	end	
+	end
 	local _, class, rank, rankIndex, oNote, _, classFile = CEPGP_getGuildInfo(player);
 	local EP,GP = CEPGP_getEPGP(oNote);
 	CEPGP_standbyRoster[#CEPGP_standbyRoster+1] = {
@@ -623,7 +623,7 @@ function CEPGP_standardiseString(str)
 	--Returns the string with proper nouns capitalised
 	if not str then return; end
 	local words = {};
-	
+
 	local count = 0;
 	for i in (str .. " "):gmatch("([^ ]*) ") do
 		if count == 0 then
@@ -652,7 +652,7 @@ function CEPGP_standardiseString(str)
 			result = result .. " " .. words[i];
 		end
 	end
-	
+
 	return result;
 end
 
@@ -788,7 +788,7 @@ function CEPGP_getEPGP(offNote, index, name)
 						CEPGP_print("An error was found with " .. name .. "'s GP. Their EPGP has been salvaged as " .. EP .. "," .. GP .. ". Please confirm if this is correct and modify the officer note if required.");
 					end
 					return EP,GP;
-					
+
 				elseif string.find(offNote, '[0-9]+$') then
 					EP = tonumber(strsub(offNote, 1, strfind(offNote, ",")-1));
 					GP = strsub(offNote, string.find(offNote, '[0-9]+$'), string.len(offNote));
@@ -797,7 +797,7 @@ function CEPGP_getEPGP(offNote, index, name)
 						CEPGP_print("An error was found with " .. name .. "'s GP. Their EPGP has been salvaged as " .. EP .. "," .. GP .. ". Please confirm if this is correct and modify the officer note if required.");
 					end
 					return EP,GP;
-					
+
 				else
 					EP = tonumber(strsub(offNote, 1, strfind(offNote, ",")-1));
 					if CanEditOfficerNote() then
@@ -806,11 +806,11 @@ function CEPGP_getEPGP(offNote, index, name)
 					end
 					return EP, BASEGP;
 				end
-				
+
 				return EP, BASEGP;
 			elseif string.find(offNote, ',[0-9]+$') then --GP is assumed in tact
 				GP = tonumber(strsub(offNote, strfind(offNote, ",")+1, string.len(offNote)));
-				
+
 				if string.find(offNote, '[^0-9]+,[0-9]+$') then --EP might still be intact, but characters might be padding between EP and the comma
 					EP = strsub(offNote, 1, string.find(offNote, '[^0-9]+,')-1);
 					if CanEditOfficerNote() then
@@ -818,7 +818,7 @@ function CEPGP_getEPGP(offNote, index, name)
 						CEPGP_print("An error was found with " .. name .. "'s EP. Their EPGP has been salvaged as " .. EP .. "," .. GP .. ". Please confirm if this is correct and modify the officer note if required.");
 					end
 					return EP, GP;
-					
+
 				elseif string.find(offNote, '^[^0-9]+[0-9]+,[0-9]+$') then --or pheraps the error is at the start of the string?
 					EP = strsub(offNote, string.find(offNote, '[0-9]+,'), string.find(offNote, ',[0-9]+$')-1);
 					if CanEditOfficerNote() then
@@ -826,7 +826,7 @@ function CEPGP_getEPGP(offNote, index, name)
 						CEPGP_print("An error was found with " .. name .. "'s EP. Their EPGP has been salvaged as " .. EP .. "," .. GP .. ". Please confirm if this is correct and modify the officer note if required.");
 					end
 					return EP, GP;
-					
+
 				else --EP cannot be salvaged
 					if CanEditOfficerNote() then
 						--GuildRosterSetOfficerNote(index, "0," .. GP);
@@ -841,7 +841,7 @@ function CEPGP_getEPGP(offNote, index, name)
 		end
 	end
 	local EP, GP = nil;
-	
+
 	if offNote == "" then --Click here to set an officer note qualifies as blank, also occurs if the officer notes are not visible
 		return 0, tonumber(BASEGP);
 	end
@@ -960,7 +960,7 @@ function CEPGP_tContains(t, val, bool)
 			end
 		end
 	elseif bool == true then
-		for index,_ in pairs(t) do 
+		for index,_ in pairs(t) do
 			if index == val then
 				return true;
 			end
@@ -1193,7 +1193,7 @@ function CEPGP_UIDropDownMenu_Initialize(frame, initFunction, displayMode, level
 		end
 	end
 	frame:SetHeight(UIDROPDOWNMENU_BUTTON_HEIGHT * 2);
-	
+
 	-- Set the initialize function and call it.  The initFunction populates the dropdown list.
 	if ( initFunction ) then
 		frame.initialize = initFunction;
@@ -1254,7 +1254,7 @@ function CEPGP_getDebugInfo()
 	else
 		info = info .. "Standby EP Manual Delegation: False<br />\n";
 	end
-	
+
 	if CEPGP_loot_GUI then
 		info = info .. "GUI for Loot: True<br />\n";
 	else
@@ -1426,8 +1426,8 @@ function CEPGP_formatExport()
 	end
 	temp = CEPGP_tSort(temp, 1);
 	local form = _G["CEPGP_export"]:GetAttribute("format");
-	
-	
+
+
 	if form == "CSV" then
 		for i = 1, #temp do
 			text = text .. temp[i][1];
@@ -1443,8 +1443,8 @@ function CEPGP_formatExport()
 		end
 		_G["CEPGP_export_dump"]:SetText(text);
 		_G["CEPGP_export_dump"]:HighlightText();
-		
-		
+
+
 	elseif form == "JSON" then
 		text = "{";
 		text = text .. "\"roster\": [";
@@ -1612,17 +1612,17 @@ function CEPGP_checkVersion(message)
 	build = string.sub(build, string.len(major)+2);
 	local minor = string.sub(build, 0, string.find(build, "%.")-1);
 	build = string.sub(build, string.find(build, "%.")+1);
-	
+
 	--Current build information
 	local curBuild = CEPGP_VERSION;
 	local curMajor = string.sub(curBuild, 0, string.find(curBuild, "%.")-1);
 	curBuild = string.sub(curBuild, string.len(curMajor)+2);
 	local curMinor = string.sub(curBuild, 0, string.find(curBuild, "%.")-1);
 	curBuild = string.sub(curBuild, string.find(curBuild, "%.")+1);
-	
+
 	outMessage = "Your addon is out of date. Version " .. major .. "." .. minor .. "." .. build .. " is now available for download at https://github.com/Alumian/CEPGP-Retail"
 	if not CEPGP_VERSION_NOTIFIED then
-		if tonumber(major) > tonumber(curMajor) then 
+		if tonumber(major) > tonumber(curMajor) then
 			CEPGP_print(outMessage);
 			CEPGP_VERSION_NOTIFIED = true;
 		elseif tonumber(major) == tonumber(curMajor) and tonumber(minor) > tonumber(curMinor) then
