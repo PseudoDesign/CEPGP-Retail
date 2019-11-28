@@ -325,7 +325,24 @@ end
 function CEPGP_AddRaidEP(amount, msg, encounter)
 	amount = math.floor(amount);
 	local total = GetNumGroupMembers();
-	local raid_timestamp = time();
+
+	local log_timestamp = time();
+  local log_message = "";
+
+	-- Parse the message and entounter field to determine what message is saved to logs
+	if tonumber(amount) <= 0 then
+		log_message = "Subract";
+	else
+		log_message = "Add";
+	end
+	log_message = log_message .. " " .. amount .. " Raid EP";
+	if encounter then
+		log_message = log_message .. " - " .. encounter;
+	elseif msg ~= "" and msg ~= nil then
+		log_message = log_message .. " (" .. msg .. ")";
+	end
+
+  -- Adjust each raid member's EPGP, and log the traffic if verbose is set
 	if total > 0 then
 		for i = 1, total do
 			local name = GetRaidRosterInfo(i);
@@ -334,7 +351,10 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
 				if not CEPGP_checkEPGP(CEPGP_roster[name][5]) then
 					GuildRosterSetOfficerNote(index, amount .. "," .. BASEGP);
 				else
+					local orig_ep, orig_gp;
 					EP,GP = CEPGP_getEPGP(CEPGP_roster[name][5]);
+					orig_ep = EP;
+					orig_gp = GP;
 					EP = tonumber(EP);
 					GP = tonumber(GP);
 					EP = EP + amount;
@@ -346,37 +366,23 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
 					end
 					GuildRosterSetOfficerNote(index, EP .. "," .. GP);
 				end
+				if CEPGP_verbose_traffic_logging then
+					TRAFFIC[CEPGP_ntgetn(TRAFFIC)+1] = {name, UnitName("player"), log_message, orig_ep, EP, orig_gp, GP, log_timestamp};
+					CEPGP_ShareTraffic(name, UnitName("player"), log_message, orig_ep, EP, orig_gp, GP);
+				end
 			end
 		end
 	end
-	if msg ~= "" and msg ~= nil or encounter then
-		if encounter then -- a boss was killed
-			TRAFFIC[CEPGP_ntgetn(TRAFFIC)+1] = {"Raid", UnitName("player"), "Add Raid EP +" .. amount .. " - " .. encounter, "", "", "", "", "", raid_timestamp};
-			CEPGP_ShareTraffic("Raid", UnitName("player"), "Add Raid EP +" .. amount .. " - " .. encounter);
-			CEPGP_sendChatMessage(msg, CHANNEL);
-		else -- EP was manually given, could be either positive or negative, and a message was written
-			if tonumber(amount) <= 0 then
-				TRAFFIC[CEPGP_ntgetn(TRAFFIC)+1] = {"Raid", UnitName("player"), "Subtract Raid EP +" .. amount .. " (" .. msg .. ")", "", "", "", "", "", raid_timestamp};
-				CEPGP_ShareTraffic("Raid", UnitName("player"), "Subtract Raid EP " .. amount .. " (" .. msg .. ")");
-				CEPGP_sendChatMessage(amount .. " EP taken from all raid members (" .. msg .. ")", CHANNEL);
-			else
-				TRAFFIC[CEPGP_ntgetn(TRAFFIC)+1] = {"Raid", UnitName("player"), "Add Raid EP +" .. amount .. " (" .. msg .. ")", "", "", "", "", "", raid_timestamp};
-				CEPGP_ShareTraffic("Raid", UnitName("player"), "Add Raid EP +" .. amount .. " (" .. msg .. ")");
-				CEPGP_sendChatMessage(amount .. " EP awarded to all raid members (" .. msg .. ")", CHANNEL);
-			end
-		end
-	else -- no message was written
-		if tonumber(amount) <= 0 then
-			amount = string.sub(amount, 2, string.len(amount));
-			TRAFFIC[CEPGP_ntgetn(TRAFFIC)+1] = {"Raid", UnitName("player"), "Subtract Raid EP -" .. amount, "", "", "", "", "", raid_timestamp};
-			CEPGP_ShareTraffic("Raid", UnitName("player"), "Subtract Raid EP -" .. amount);
-			CEPGP_sendChatMessage(amount .. " EP taken from all raid members", CHANNEL);
-		else
-			TRAFFIC[CEPGP_ntgetn(TRAFFIC)+1] = {"Raid", UnitName("player"), "Add Raid EP +" .. amount, "", "", "", "", "", raid_timestamp};
-			CEPGP_ShareTraffic("Raid", UnitName("player"), "Add Raid EP +" .. amount);
-			CEPGP_sendChatMessage(amount .. " EP awarded to all raid members", CHANNEL);
-		end
+
+	-- Send the non-verbose traffic to traffic logs
+	if not CEPGP_verbose_traffic_logging then
+		TRAFFIC[CEPGP_ntgetn(TRAFFIC)+1] = {"Raid", UnitName("player"), log_message, "", "", "", "", "", log_timestamp};
+		CEPGP_ShareTraffic("Raid", UnitName("player"), log_message);
 	end
+
+	-- Send a message to the raid
+	CEPGP_sendChatMessage(log_message, CHANNEL);
+
 	CEPGP_UpdateTrafficScrollBar();
 end
 
