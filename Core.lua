@@ -330,12 +330,12 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
   local log_message = "";
 
 	-- Parse the message and entounter field to determine what message is saved to logs
-	if tonumber(amount) <= 0 then
+	if amount <= 0 then
 		log_message = "Subract";
 	else
 		log_message = "Add";
 	end
-	log_message = log_message .. " " .. amount .. " Raid EP";
+	log_message = log_message .. " " .. math.abs(amount) .. " Raid EP";
 	if encounter then
 		log_message = log_message .. " - " .. encounter;
 	elseif msg ~= "" and msg ~= nil then
@@ -380,8 +380,12 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
 		CEPGP_ShareTraffic("Raid", UnitName("player"), log_message);
 	end
 
-	-- Send a message to the raid
-	CEPGP_sendChatMessage(log_message, CHANNEL);
+	-- Send a message to the raid.  If it's an encounter, send the "msg" parameter instead of the log_message
+	if encounter then
+		CEPGP_sendChatMessage(msg, CHANNEL);
+	else
+		CEPGP_sendChatMessage(log_message, CHANNEL);
+	end
 
 	CEPGP_UpdateTrafficScrollBar();
 end
