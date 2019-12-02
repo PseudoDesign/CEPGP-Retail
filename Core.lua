@@ -326,6 +326,8 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
 	-- Returns true when successful, else false
 	amount = math.floor(amount);
 	local total = GetNumGroupMembers();
+	local orig_ep;
+	local orig_gp;
 
 	local log_timestamp = time();
   local log_message = "";
@@ -355,14 +357,11 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
 				if not CEPGP_checkEPGP(CEPGP_roster[name][5]) then
 					GuildRosterSetOfficerNote(index, amount .. "," .. BASEGP);
 				else
-					local orig_ep, orig_gp;
 					EP,GP = CEPGP_getEPGP(CEPGP_roster[name][5]);
-					orig_ep = EP;
-					orig_gp = GP;
-					EP = tonumber(EP);
-					GP = tonumber(GP);
-					EP = EP + amount;
-					if GP < BASEGP then
+					orig_ep = tonumber(EP);
+					orig_gp = tonumber(GP);
+					EP = orig_ep + amount;
+					if orig_gp < BASEGP then
 						GP = BASEGP;
 					end
 					if EP < 0 then
@@ -371,7 +370,7 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
 					GuildRosterSetOfficerNote(index, EP .. "," .. GP);
 				end
 				if CEPGP_verbose_traffic_logging then
-					TRAFFIC[CEPGP_ntgetn(TRAFFIC)+1] = {name, UnitName("player"), log_message, orig_ep, EP, orig_gp, GP, log_timestamp};
+					TRAFFIC[CEPGP_ntgetn(TRAFFIC)+1] = {name, UnitName("player"), log_message, orig_ep, EP, orig_gp, GP, "", log_timestamp};
 					CEPGP_ShareTraffic(name, UnitName("player"), log_message, orig_ep, EP, orig_gp, GP);
 				end
 			end
