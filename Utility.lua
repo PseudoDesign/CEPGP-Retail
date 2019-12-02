@@ -1411,6 +1411,58 @@ function CEPGP_deleteAttendance()
 	CEPGP_UpdateAttendanceScrollBar();
 end
 
+function CEPGP_formatExportTraffic()
+	local form = _G["CEPGP_export_traffic"]:GetAttribute("format");
+	-- Add csv header
+	if form == "CSV" then
+		text = "target_name,issuer_name,action,ep_before,ep_after,gp_before,gp_after,item,timestamp\n";
+	elseif form == "JSON" then
+		text = "{\"epgp_traffic\":["
+	end
+	for i = #TRAFFIC, 1, -1 do
+		local name, issuer, action, EPB, EPA, GPB, GPA, item, tStamp = TRAFFIC[i][1], TRAFFIC[i][2], TRAFFIC[i][3], TRAFFIC[i][4], TRAFFIC[i][5], TRAFFIC[i][6], TRAFFIC[i][7], TRAFFIC[i][8], TRAFFIC[i][9];
+		if form == "CSV" then
+			text = text .. name .. ",";
+			text = text .. issuer .. ",";
+			text = text .. action .. ",";
+			text = text .. EPB .. ",";
+			text = text .. EPA .. ",";
+			text = text .. GPB .. ",";
+			text = text .. GPA .. ",";
+			if item then
+				text = text .. item .. ",";
+			else
+				text = text .. ",";
+			end
+			if tStamp then
+				text = text .. tStamp;
+			end
+			text = text .. "\n";
+		elseif form == "JSON" then
+			text = text .. "{";
+			text = text .. "\"target_name\":\"" .. name .. "\",";
+			text = text .. "\"issuer_name\":\"" .. issuer .. "\",";
+			text = text .. "\"action\":\"" .. action .. "\",";
+			text = text .. "\"ep_before\":\"" .. EPB .. "\",";
+			text = text .. "\"ep_after\":\"" .. EPA .. "\",";
+			text = text .. "\"gp_before\":\"" .. GPB .. "\",";
+			text = text .. "\"gp_after\":\"" .. GPA .. "\",";
+			if item then
+				text = text .. "\"item\":\"" .. item .. "\",";
+			end
+			if tStamp then
+				text = text .. "\"timestamp\":\"" .. tStamp .. "\",";
+			end
+			text = text .. "},";
+		end
+	end
+	if form == "JSON" then
+		text = text .. "]}"
+	end
+	_G["CEPGP_export_traffic_dump"]:SetText(text);
+	_G["CEPGP_export_traffic_dump"]:HighlightText();
+end
+
 function CEPGP_formatExport()
 	--form is the export format
 	local temp = {};
