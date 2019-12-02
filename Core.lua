@@ -323,6 +323,7 @@ end
 --[[ ADD EPGP FUNCTIONS ]]--
 
 function CEPGP_AddRaidEP(amount, msg, encounter)
+	-- Returns true when successful, else false
 	amount = math.floor(amount);
 	local total = GetNumGroupMembers();
 
@@ -330,7 +331,10 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
   local log_message = "";
 
 	-- Parse the message and entounter field to determine what message is saved to logs
-	if amount <= 0 then
+  if amount == 0 then
+		CEPGP_print("Cannot add 0 EP");
+		return false;
+	elseif amount < 0 then
 		log_message = "Subract";
 	else
 		log_message = "Add";
@@ -388,6 +392,7 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
 	end
 
 	CEPGP_UpdateTrafficScrollBar();
+	return true;
 end
 
 function CEPGP_addGuildEP(amount, msg)

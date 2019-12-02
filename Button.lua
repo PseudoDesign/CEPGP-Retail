@@ -11,7 +11,7 @@ function CEPGP_ListButton_OnClick(obj)
 		_G["CEPGP_context_reason"]:Show();
 		_G["CEPGP_context_popup_reason"]:Show();
 	end
-	
+
 	if strfind(obj, "Delete") then
 		local name = _G["CEPGP_overrideButton" .. _G[obj]:GetParent():GetID() .. "item"]:GetText();
 		OVERRIDE_INDEX[name] = nil;
@@ -19,7 +19,7 @@ function CEPGP_ListButton_OnClick(obj)
 		CEPGP_UpdateOverrideScrollBar();
 		return;
 	end
-	
+
 	if obj == "CEPGP_options_standby_ep_award" then
 		ShowUIPanel(CEPGP_context_popup);
 		ShowUIPanel(CEPGP_context_amount);
@@ -43,7 +43,7 @@ function CEPGP_ListButton_OnClick(obj)
 															end
 														end);
 		return;
-	
+
 	elseif strfind(obj, "StandbyButton") then
 		local name = _G[_G[_G[obj]:GetName()]:GetParent():GetName() .. "Info"]:GetText();
 		for i = 1, CEPGP_ntgetn(CEPGP_standbyRoster) do
@@ -58,7 +58,7 @@ function CEPGP_ListButton_OnClick(obj)
 		CEPGP_UpdateStandbyScrollBar();
 		return;
 	end
-	
+
 	if obj == "CEPGP_standby_ep_list_add" and (CanEditOfficerNote() or CEPGP_debugMode) then
 		ShowUIPanel(CEPGP_context_popup);
 		CEPGP_context_popup_EP_check:Hide();
@@ -76,7 +76,7 @@ function CEPGP_ListButton_OnClick(obj)
 														end);
 		return;
 	end
-	
+
 	if obj == "CEPGP_standby_ep_list_addbyrank" then
 		CEPGP_standby_addRank:Show();
 	end
@@ -116,12 +116,12 @@ function CEPGP_ListButton_OnClick(obj)
 		CEPGP_standbyRoster = {};
 		CEPGP_UpdateStandbyScrollBar();
 	end
-	
+
 	if not CanEditOfficerNote() and not CEPGP_debugMode then
 		CEPGP_print("You don't have access to modify EPGP", 1);
 		return;
 	end
-	
+
 	--[[ Distribution Menu ]]--
 	if strfind(obj, "LootDistButton") then --A player in the distribution menu is clicked
 		ShowUIPanel(CEPGP_distribute_popup);
@@ -129,7 +129,7 @@ function CEPGP_ListButton_OnClick(obj)
 		CEPGP_distPlayer = _G[_G[obj]:GetName() .. "Info"]:GetText();
 		CEPGP_distribute_popup:SetID(CEPGP_distribute:GetID()); --CEPGP_distribute:GetID gets the ID of the LOOT SLOT. Not the player.
 		return;
-	
+
 		--[[ Guild Menu ]]--
 	elseif strfind(obj, "GuildButton") then --A player from the guild menu is clicked (awards EP)
 		local name = _G[_G[obj]:GetName() .. "Info"]:GetText();
@@ -159,7 +159,7 @@ function CEPGP_ListButton_OnClick(obj)
 															end
 														end);
 		return;
-		
+
 	elseif strfind(obj, "CEPGP_guild_add_EP") then --Click the Add Guild EP button in the Guild menu
 		ShowUIPanel(CEPGP_context_popup);
 		ShowUIPanel(CEPGP_context_amount);
@@ -183,7 +183,7 @@ function CEPGP_ListButton_OnClick(obj)
 															end
 														end);
 		return;
-	
+
 	elseif strfind(obj, "CEPGP_guild_decay") then --Click the Decay Guild EPGP button in the Guild menu
 		ShowUIPanel(CEPGP_context_popup);
 		ShowUIPanel(CEPGP_context_amount);
@@ -207,7 +207,7 @@ function CEPGP_ListButton_OnClick(obj)
 															end
 														end);
 		return;
-		
+
 	elseif strfind(obj, "CEPGP_guild_reset") then --Click the Reset All EPGP Standings button in the Guild menu
 		ShowUIPanel(CEPGP_context_popup);
 		HideUIPanel(CEPGP_context_amount);
@@ -226,7 +226,7 @@ function CEPGP_ListButton_OnClick(obj)
 															CEPGP_resetAll(CEPGP_context_reason:GetText());
 														end)
 		return;
-		
+
 		--[[ Raid Menu ]]--
 	elseif strfind(obj, "RaidButton") then --A player from the raid menu is clicked (awards EP)
 		local name = _G[_G[obj]:GetName() .. "Info"]:GetText();
@@ -260,7 +260,7 @@ function CEPGP_ListButton_OnClick(obj)
 															end
 														end);
 		return;
-	
+
 	elseif strfind(obj, "CEPGP_raid_add_EP") then --Click the Add Raid EP button in the Raid menu
 		ShowUIPanel(CEPGP_context_popup);
 		ShowUIPanel(CEPGP_context_amount);
@@ -279,8 +279,9 @@ function CEPGP_ListButton_OnClick(obj)
 																CEPGP_print("Enter a valid number", true);
 															else
 																PlaySound(799);
-																HideUIPanel(CEPGP_context_popup);
-																CEPGP_AddRaidEP(tonumber(CEPGP_context_amount:GetText()), CEPGP_context_reason:GetText());
+																if CEPGP_AddRaidEP(tonumber(CEPGP_context_amount:GetText()), CEPGP_context_reason:GetText()) then
+																	HideUIPanel(CEPGP_context_popup);
+																end
 															end
 														end);
 		return;
@@ -288,7 +289,7 @@ function CEPGP_ListButton_OnClick(obj)
 end
 
 function CEPGP_setOverrideLink(frame, event)
-	
+
 	if event == "enter" then
 		local _, link = GetItemInfo(frame:GetText());
 		GameTooltip:SetOwner(frame, "ANCHOR_TOPLEFT");
@@ -339,7 +340,7 @@ function CEPGP_restoreDropdownOnClick(self, arg1, arg2, checked)
 end
 
 		--[[ Sync Rank DropDown ]]--
-		
+
 function CEPGP_syncRankDropdown(frame, level, menuList)
 	for i = 1, 10, 1 do
 		if GuildControlGetRankName(i) ~= "" then
@@ -361,7 +362,7 @@ function CEPGP_syncRankChange(self, arg1, arg2, checked)
 end
 
 		--[[ Attendance DropDown ]]--
-		
+
 function CEPGP_attendanceDropdown(frame, level, menuList)
 	local info = {text = "Guild List", value = 0, func = CEPGP_attendanceChange};
 	local entry = UIDropDownMenu_AddButton(info);
@@ -409,7 +410,7 @@ function CEPGP_minThresholdChange(self, value)
 end
 
 		--[[ Default Channel DropDown ]]--
-		
+
 function CEPGP_defChannelDropdown(frame, level, menuList)
 	local channels = {
 		[1] = "Say",
@@ -446,7 +447,7 @@ function CEPGP_defChannelChange(self, value)
 end
 
 		--[[ Loot Response Channel DropDown ]]--
-		
+
 function CEPGP_lootChannelDropdown(frame, level, menuList)
 	local channels = {
 		[1] = "Say",
