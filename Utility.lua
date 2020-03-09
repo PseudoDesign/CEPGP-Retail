@@ -1439,21 +1439,29 @@ function CEPGP_formatExportTraffic()
 			end
 			text = text .. "\n";
 		elseif form == "JSON" then
-			text = text .. "{";
-			text = text .. "\"target_name\":\"" .. name .. "\",";
-			text = text .. "\"issuer_name\":\"" .. issuer .. "\",";
-			text = text .. "\"action\":\"" .. action .. "\",";
-			text = text .. "\"ep_before\":\"" .. EPB .. "\",";
-			text = text .. "\"ep_after\":\"" .. EPA .. "\",";
-			text = text .. "\"gp_before\":\"" .. GPB .. "\",";
-			text = text .. "\"gp_after\":\"" .. GPA .. "\",";
+			if i == #TRAFFIC then
+				text = text .. "{";
+			else
+				text = text .. ",{";
+			end
+			text = text .. "\"target_name\":\"" .. name .. "\"";
+			text = text .. ",\"issuer_name\":\"" .. issuer .. "\"";
+			text = text .. ",\"action\":\"" .. action .. "\"";
+			text = text .. ",\"ep_before\":\"" .. EPB .. "\"";
+			text = text .. ",\"ep_after\":\"" .. EPA .. "\"";
+			text = text .. ",\"gp_before\":\"" .. GPB .. "\"";
+			text = text .. ",\"gp_after\":\"" .. GPA .. "\"";
 			if item then
-				text = text .. "\"item\":\"" .. item .. "\",";
+				local _, _, itemId, itemName = string.find(item, "|?c?f?f?%x*|?H?[^:]*:?(%d+):+%d+:+|?h?%[?([^%[%]]*)%]?|?h?|?r?")
+				if itemId then
+					text = text .. ",\"item_name\":\"" .. itemName .. "\"";
+					text = text .. ",\"item_id\":\"" .. itemId .. "\"";
+				end
 			end
 			if tStamp then
-				text = text .. "\"timestamp\":\"" .. tStamp .. "\",";
+				text = text .. ",\"timestamp\":\"" .. tStamp .. "\"";
 			end
-			text = text .. "},";
+			text = text .. "}";
 		end
 	end
 	if form == "JSON" then
